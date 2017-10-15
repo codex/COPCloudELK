@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+  <style>
+    table,th,td {
+      border : 1px solid black;
+      border-collapse: collapse;
+    }
+    th,td {
+      padding: 5px;
+      text-align: center;
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+</head>
+<body>
+<div id="result">Sensor data will be listed here...</div>
+<script>
+
+function getColorState(isValid) {
+  return isValid ? 'green' : 'red'
+}
+
+function convertToHtml(result){
+  const sensorHtml = result.map((sensorData) => {
+    const colors = sensorData.data.map((datum) => getColorState(datum.valid))
+
+    return `<table width="80%">
+        <tr>
+          <th width="15%">SensorTyp</th>
+          <th width="30%">SensorId</th>
+          <th width="15%">${sensorData.data[0].type}</th>
+          <th width="15%">${sensorData.data[1].type}</th>
+          <th width="15%">${sensorData.data[2].type}</th>
+        </tr>
+        <tr>
+          <td>${sensorData.sensorType}</td>
+          <td>${sensorData.sensorId}</td>
+          <td><font color="${colors[0]}">${sensorData.data[0].value}</font></td>
+          <td><font color="${colors[1]}">${sensorData.data[1].value}</font></td>
+          <td><font color="${colors[2]}">${sensorData.data[2].value}</font></td>
+        </tr>
+      </table>`
+  })
+  return `<div>${sensorHtml.join('<br />')}</div>`
+}
+
+(function refreshData() {
+  $.get('http://localhost:8082/data', function(result) {
+    $('#result').html(`${convertToHtml(result)}`);
+    setTimeout(refreshData, 5000);
+  });
+})();
+</script>
+
+</body>
+</html>
