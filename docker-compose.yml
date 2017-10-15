@@ -1,0 +1,88 @@
+version: '2'
+services:
+  elasticsearch:
+    build: elasticsearch/
+    container_name: elasticsearch
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+
+  logstash:
+    build: logstash/
+    container_name: logstash
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    ports:
+      - "5000:5000"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    build: kibana/
+    container_name: kibana
+    volumes:
+      - ./kibana/config/:/usr/share/kibana/config
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  sensor: 
+    build: sensor
+    container_name: sensor
+    links:
+      - logstash
+    ports: 
+      - "8080:8080"
+    restart: always
+    networks:
+      - elk
+    depends_on:
+      - logstash
+
+  aggregator: 
+    build: aggregator
+    container_name: aggregator
+    links: 
+      - sensor
+      - logstash
+    ports: 
+      - "8081:8081"
+    restart: always
+    networks:
+      - elk
+    depends_on:
+      - logstash
+
+  controlunit: 
+    build: controlUnit
+    container_name: controlunit
+    links: 
+      - sensor
+      - aggregator
+      - logstash
+    ports: 
+      - "8082:8082"
+    restart: always
+    networks:
+      - elk
+    depends_on:
+      - logstash
+
+networks:
+
+  elk:
+    driver: bridge
