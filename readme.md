@@ -19,6 +19,10 @@ Make sure the following are installed:
 * jdk8
 * maven
 
+```
+sudo apt-get install git docker docker-compose maven openjdk-8-jdk
+```
+
 ### Build
 
 #### Build the Microservice jars
