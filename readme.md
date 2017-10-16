@@ -21,7 +21,7 @@ Make sure the following are installed:
 
 ### Build
 
-Build the Microservices
+Build the Microservice jars
 ```
 ~/COPCloudELK$ cd sensor/
 ~/COPCloudELK/sensor$ mvn package
@@ -42,10 +42,21 @@ Run It
 ```
 ~/COPCloudELK$ docker-compose -f docker-compose.yml -f extensions/logspout/logspout-compose.yml up
 ```
+On first run, Kibana will need a couple of minutes to "optimize and cache bundles". It will log a second line when it's ready.
 
 
 Stop It
 
 ```
 ~/COPCloudELK$ docker-compose -f docker-compose.yml -f extensions/logspout/logspout-compose.yml stop
+```
+
+Useful URLs
+
+```
+KIBANA => localhost:5601
+Frontend => Open ./frondend/index.html in your Browser
+Sensor => localhost:8080/sensors localhost:8080/sensor/<SensorID>
+Aggregator => localhost:8081/aggregate?sensorId=<sensorID>
+ControlUnit => localhost:8082/data
 ```
