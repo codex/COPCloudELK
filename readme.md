@@ -60,5 +60,3 @@ Sensor => localhost:8080/sensors localhost:8080/sensor/<SensorID>
 Aggregator => localhost:8081/aggregate?sensorId=<sensorID>
 ControlUnit => localhost:8082/data
 ```
-
-### Usage
